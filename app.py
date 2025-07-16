@@ -8,15 +8,10 @@ from utils.download import download_model_from_drive
 app = Flask(__name__)
 CORS(app)
 
-# Load model
 MODEL_PATH = "models/ensemble_medical_model.joblib"
-MODEL_FILE_ID = "1KjygXsSIGGVp6c9UVhdU9_rNCV6GQlWy"
 
-os.makedirs("models", exist_ok=True)
-
-if not os.path.exists(MODEL_PATH):
-    print("📥 Downloading model from Google Drive...")
-    download_model_from_drive(MODEL_FILE_ID, MODEL_PATH)
+# Download and load model
+download_model_from_drive()
 
 print("📦 Loading model...")
 model = joblib.load(MODEL_PATH)
@@ -29,8 +24,11 @@ def predict():
         symptoms = input_data.get('symptoms')
         age = input_data.get('age')
 
+        # TODO: Replace this with your actual preprocessing + prediction
         # X = preprocess(symptoms, age)
-        prediction = "PredictedDisease"  # Replace with: model.predict(X)
+        # prediction = model.predict(X)[0]
+        prediction = "PredictedDisease"
+
         return jsonify({'prediction': prediction})
     
     except Exception as e:

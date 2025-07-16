@@ -1,0 +1,7 @@
+Flask
+flask-cors
+joblib
+gdown
+scikit-learn
+numpy
+requests

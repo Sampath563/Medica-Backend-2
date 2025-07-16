@@ -1,20 +1,6 @@
 import requests
-import os
 
-# Your Drive File ID
-FILE_ID = "1KjygXsSIGGVp6c9UVhdU9_rNCV6GQlWy"
-DESTINATION = "models/ensemble_medical_model.joblib"
-
-def download_model_from_drive(file_id="1KjygXsSIGGVp6c9UVhdU9_rNCV6GQlWy", destination="models/ensemble_medical_model.joblib"):
-    if not os.path.exists("models"):
-        os.makedirs("models")
-
-    if os.path.exists(destination):
-        print("✅ Model already exists.")
-        return
-
-    print("📥 Downloading model from Google Drive...")
-
+def download_model_from_drive(file_id, destination):
     URL = "https://docs.google.com/uc?export=download"
     session = requests.Session()
     
@@ -26,8 +12,6 @@ def download_model_from_drive(file_id="1KjygXsSIGGVp6c9UVhdU9_rNCV6GQlWy", desti
         response = session.get(URL, params=params, stream=True)
 
     save_response_content(response, destination)
-    print("✅ Download complete.")
-
 
 def get_confirm_token(response):
     for key, value in response.cookies.items():
@@ -36,7 +20,7 @@ def get_confirm_token(response):
     return None
 
 def save_response_content(response, destination):
-    with open(destination, "wb") as f:
+    with open(destination, 'wb') as f:
         for chunk in response.iter_content(32768):
-            if chunk:  # filter out keep-alive chunks
+            if chunk:
                 f.write(chunk)

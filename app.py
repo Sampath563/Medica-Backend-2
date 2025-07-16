@@ -1,20 +1,30 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import joblib
 import os
+import pickle
 
 from utils.download import download_model_from_drive
 
 app = Flask(__name__)
 CORS(app)
 
-MODEL_PATH = "models/ensemble_medical_model.joblib"
+# Model file info
+MODEL_PATH = "models/ensemble_medical_model.pkl"
+MODEL_FILE_ID = "15J6ieS97efmxGySE6c_9yMEbwZdMxpII"
 
-# Download and load model
-download_model_from_drive()
+# Ensure model folder exists
+os.makedirs("models", exist_ok=True)
 
+# Download model if not already present
+if not os.path.exists(MODEL_PATH):
+    print("📥 Downloading model from Google Drive...")
+    download_model_from_drive(MODEL_FILE_ID, MODEL_PATH)
+    print("✅ Download complete.")
+
+# Load model using pickle
 print("📦 Loading model...")
-model = joblib.load(MODEL_PATH)
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
 print("✅ Model loaded successfully.")
 
 @app.route('/predict', methods=['POST'])
@@ -24,11 +34,8 @@ def predict():
         symptoms = input_data.get('symptoms')
         age = input_data.get('age')
 
-        # TODO: Replace this with your actual preprocessing + prediction
-        # X = preprocess(symptoms, age)
-        # prediction = model.predict(X)[0]
+        # Dummy response for now — replace with actual preprocessing/prediction
         prediction = "PredictedDisease"
-
         return jsonify({'prediction': prediction})
     
     except Exception as e:
